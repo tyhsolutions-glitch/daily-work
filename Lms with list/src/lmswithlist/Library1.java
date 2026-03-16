@@ -1,88 +1,55 @@
 package lmswithlist;
 
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
 public class Library1 {
-    public static void main(String[] args) {
-        Library1 library = new Library1();
-        Scanner sc = new Scanner(System.in);
-        int choice;
 
-        do {
-            System.out.println("\nLibrary Menu:");
-            System.out.println("1. Add a book");
-            System.out.println("2. Remove a book");
-            System.out.println("3. Reserve a book");
-            System.out.println("4. Borrow a book");
-            System.out.println("5. Return a book");
-            System.out.println("6. List of books");
-            System.out.println("0. Exit");
-            System.out.print("Enter choice: ");
-            choice = sc.nextInt();
-            sc.nextLine(); // consume newline
+    List<Book1> list = new ArrayList<>();
 
-            switch (choice) {
-                case 1 -> {
-                    System.out.print("Enter title: ");
-                    String title = sc.nextLine();
-                    System.out.print("Enter author: ");
-                    String author = sc.nextLine();
-                    System.out.print("Enter price: ");
-                    double price = sc.nextDouble();
-                    sc.nextLine(); // consume newline
-                    library.addBook(new Book1(title, author, price));
-                }
-          case 2 -> {
-          System.out.print("Enter title to remove: ");
-          String title = sc.nextLine();
-          library.removeBook(title);
-                }
-          case 3 -> {
-          System.out.print("Enter title to reserve: ");
-          String title = sc.nextLine();
-          library.removeBook(title);
-                }
-          case 4 -> {
-          System.out.print("Enter title to borrow: ");
-          String title = sc.nextLine();
-          library.borrowBook(title);
-                }
-          case 5 -> {
-          System.out.print("Enter title to return: ");
-          String title = sc.nextLine();
-          library.returnBook(title);
-                }
-          case 6 -> library.listBooks();
-          case 0 -> System.out.println("Exiting Library");
-          default -> System.out.println("Invalid choice.");
-            }
-        } while (choice != 0);
-
-        sc.close();
+    void addBook(int id, String title, float price, String author) {
+        try {
+            Book1 b = new Book1(id, title, price, author);
+            list.add(b);
+            FileWriter fw = new FileWriter("LibraryData.txt", true);
+            fw.write("ID:" + id + "," + title + "," + author + "," + price + "," + b.status + "\n");
+            fw.close();
+            System.out.println("Book added and saved to file");
+        } catch(IOException e) {
+            System.out.println("Error writing to file");
+        }
     }
 
-	private void borrowBook(String title) {
-		// TODO Auto-generated method stub
-		
-	}
+    void updateStatus(int id, String newStatus) {
+        try {
+            for (Book1 b : list) {
+                if (b.id == id) {
+                    b.status = newStatus;
+                    break;
+                }
+            }
+            FileWriter fw = new FileWriter("LibraryData.txt", false);  
+            for (Book1 b : list) {
+                fw.write("ID:" + b.id + "," + b.title + "," + b.author + "," + b.price + "," + b.status + "\n");
+            }
+            fw.close();
+            System.out.println("Status updated for ID:" + id + " -> " + newStatus);
+        } catch(IOException e) {
+            System.out.println("Error updating status");
+        }
+    }
 
-	void removeBook(String title) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	void addBook(Book1 book1) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void returnBook(String title) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Object listBooks() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    void displayAvailableBooks() {
+        try (BufferedReader br = new BufferedReader(new FileReader("LibraryData.txt"))) {
+            String line;
+            System.out.println("\nAvailable Books:");
+            while ((line = br.readLine()) != null) {
+                if (line.contains("Available")) { 
+                    System.out.println(line);
+                }
+            }
+        } catch(IOException e) {
+            System.out.println("Error reading file");
+        }
+    }
 }

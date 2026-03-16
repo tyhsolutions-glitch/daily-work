@@ -1,51 +1,37 @@
 package lmswithlist;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main1 {
+
     public static void main(String[] args) {
-    Library1 library = new Library1();
-    Scanner sc = new Scanner(System.in);
-    int choice;
 
-    do {
-        System.out.println("\nLibrary Menu:");
-        System.out.println("1. Add a book  ");
-        System.out.println("2. Remove a book");
-        System.out.println("3. Reserve book");
-        System.out.println("4. List of books");
-        System.out.println("5. Exit");
-        System.out.print("Enter choice: ");
-        choice = sc.nextInt();
-        sc.nextLine(); // consume newline
+        Scanner sc = new Scanner(System.in);
 
-        switch (choice) {
-        case 1 -> {
-        System.out.print("Enter title:");
+        Library1 li = new Library1();
+
+        System.out.println("Enter Book Id:");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        System.out.println("Enter Book Title:");
         String title = sc.nextLine();
-        System.out.print("Enter author:");
+
+        System.out.println("Enter Book Price:");
+        float price = sc.nextFloat();
+        sc.nextLine();
+
+        System.out.println("Enter Book Author:");
         String author = sc.nextLine();
-        System.out.print("Enter price:");
-        double price = sc.nextDouble();
-        sc.nextLine(); // consume newline
-        library.addBook(new Book1(title, author, price));
-                }
-        case 2 -> {
-        System.out.print("Enter title to remove:");
-        String title = sc.nextLine();
-        library.removeBook(title);
-                }
-        case 3 -> {
-        System.out.print("Enter title to reserve:");
-        String title = sc.nextLine();
-        library.removeBook(title);
-                }
-        case 4 -> library.listBooks();
-        case 0 -> System.out.println("Exiting Library");
-        default -> System.out.println("Invalid choice.");
-            }
-        } while (choice != 0);
 
-        sc.close();
+        li.addBook(id, title, price, author);
+
+        System.out.println("Enter Status (Available/Reserved/Regret):");
+        String status = sc.nextLine();
+
+        li.updateStatus(id, status);
+        
+        System.out.println("\nBooks in Library:");
+        li.displayAvailableBooks();
     }
 }
