@@ -30,3 +30,5 @@ public class StackArray {
         System.out.println(s.pop());
     }
 }
+
+
