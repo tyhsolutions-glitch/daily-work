@@ -15,7 +15,11 @@ public class Book1 {
         this.isBorrowed = false;
     }
 
-    public String getTitle() {
+    public Book1(int i, String string, int j, String string2) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getTitle() {
         return title;
     }
 
