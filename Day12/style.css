@@ -44,7 +44,7 @@ li {
 
 .completed {
     text-decoration: line-through;
-    color: gray;
+    color: rgb(0, 128, 0);
 }
 
 
@@ -56,4 +56,8 @@ li {
 .delete {
     background-color: red;
     color: white;
+}
+.add-btn {
+    background-color: lightgreen;
+    border: 1px solid black;
 }
