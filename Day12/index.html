@@ -1,41 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>To-Do App</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="app">
-    <h2>To-Do App</h2><br>
+    <div class="app">
+        <h2>To-Do App</h2><br>
 
-    <input type="text" id="todo-input" placeholder="Enter task">
-    <input type="date" id="todo-date">
-    <input type="time" id="todo-time">
+        <input type="text" id="todo-input" placeholder="Enter task">
 
-    <p id="error" style="color:red; display:none; margin:5px 0;">
-        Field cannot be empty
-    </p>
+        <div class="row">
+            <input type="date" id="todo-date">
+            <input type="time" id="todo-time">
+        </div>
 
-    <button class="add-btn" id="add-btn">Add</button>
-    <button class="add-btn" id="sort-btn">Sort</button>
+        <div class="priority">
+            <label for="priority-select">Priority:</label>
+            <select id="priority-select">
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
 
-    <ul id="todo-list"></ul>
-</div>
+        <p id="error" style="color:red; display:none; margin:5px 0;">
+            Field cannot be empty
+        </p>
 
-<div class="priority">
-    <label>
-        <input type="radio" name="priority" value="Urgent" checked> 
-        <span class="urgent-label">Urgent</span>
-    </label>
+        <button class="add-btn" id="add-btn">Add</button>
+        <button class="add-btn" id="sort-btn">Sort</button>
 
-    <label>
-        <input type="radio" name="priority" value="Normal"> 
-        <span class="normal-label">Normal</span>
-    </label>
-</div>
+        <ul id="todo-list"></ul>
+    </div>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

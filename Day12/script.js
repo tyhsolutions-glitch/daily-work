@@ -25,20 +25,38 @@ function validateDateTime() {
     const selectedDate = dateInput.value;
     const selectedTime = timeInput.value;
 
-    if (!selectedDate || !selectedTime) return;
+    if (!selectedDate || !selectedTime) return false;
 
     const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
-    const now = new Date();
+    const now = new Date()
+    now.setSeconds(0, 0);
 
     if (selectedDateTime < now) {
         errorDiv.textContent = 'Cannot select past date/time';
         errorDiv.style.display = 'block';
         return false;
+    }
+
+    errorDiv.style.display = 'none';
+    return true;
+}
+dateInput.addEventListener('change', updateMinTime);
+
+function updateMinTime() {
+    const selectedDate = dateInput.value;
+    const now = new Date();
+
+    const today = now.toISOString().split('T')[0];
+
+    if (selectedDate === today) {
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        timeInput.min = `${hours}:${minutes}`;
     } else {
-        errorDiv.style.display = 'none';
-        return true;
+        timeInput.min = "00:00";
     }
 }
+
 function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
 }
@@ -46,7 +64,7 @@ function addTodo() {
     const text = input.value.trim();
     const date = dateInput.value;
     const time = timeInput.value;
-    const priority = document.querySelector('input[name="priority"]:checked').value;
+    const priority = document.getElementById('priority-select').value;
     if (text === '') {
         errorDiv.textContent = 'Field cannot be empty';
         errorDiv.style.display = 'block';
@@ -103,7 +121,10 @@ function renderTodos() {
             const seconds = diff % 60;
             timeTaken = ` (Time taken: ${minutes}m ${seconds}s)`;
         }
-        const priorityClass = todo.priority === 'Urgent' ? 'urgent-text' : 'normal-text';
+        let priorityClass = '';
+        if (todo.priority === 'High') priorityClass = 'high-text';
+        else if (todo.priority === 'Medium') priorityClass = 'medium-text';
+        else priorityClass = 'low-text';
         li.innerHTML = `
             <span>
                 ${todo.text} - ${todo.date} ${todo.time}
