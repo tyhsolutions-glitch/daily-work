@@ -4,5 +4,6 @@ const router = express.Router();
 const controller = require('../controllers/notesController');
  router.get('/', controller.getAllNotes)
  router.get('/:id', controller.getNoteById)
+ router.post('/', controller.createNote)
 
  module.exports = router;
