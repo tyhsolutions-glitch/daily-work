@@ -1,31 +1,69 @@
-const service = require('../services/notesService')
-exports.createNote = async (request, response)=>{
-    const body = request.body;
-    console.log(body);
-    
+const service = require('../services/notesService');
+
+exports.createNote = async (req, res) => {
+  let { title, content } = req.body;
+
+  if (
+    !title || !content ||
+    typeof title !== 'string' ||
+    typeof content !== 'string' ||
+    !title.trim() || !content.trim()
+  ) {
+    return res.status(400).json({ message: "Invalid input" });
+  }
+
   const notes = await service.getNotes();
 
-//   const newNote = {
-//     id: Date.now(),
-//     title:,
-//     content
-//   };
+  const note = {
+    id: Date.now().toString(),
+    title: title.trim(),
+    content: content.trim(),
+    status: "created",
+    createdAt: new Date().toISOString()
+  };
 
-//   notes.push(newNote);
+  notes.push(note);
   await service.save(notes);
-  response.status(201).end();
-}
 
-exports.getAllNotes = async (request, response) =>{
-    const notes = await service.getNotes();
+  res.status(201).json(note);
+};
 
-    response.json(notes);
-    // console.log(request.method);
-    // console.log(request.headers);
-}
+exports.getAllNotes = async (req, res) => {
+  res.json(await service.getNotes());
+};
 
-exports.getNoteById= async (request, response) => {
-    const note = await service.getNoteById(request.params.id);
-    !note? response.status(404).end(): response.send(note);
-  
-}
+exports.getNoteById = async (req, res) => {
+  const note = (await service.getNotes()).find(n => n.id == req.params.id);
+  if (!note) return res.status(404).json({ message: "Not found" });
+  res.json(note);
+};
+
+exports.updateNote = async (req, res) => {
+  const notes = await service.getNotes();
+  const note = notes.find(n => n.id == req.params.id);
+
+  if (!note) return res.status(404).json({ message: "Not found" });
+  if (note.status === 'closed') return res.status(400).json({ message: "Note already closed" });
+
+  if (req.body.title && typeof req.body.title === 'string' && req.body.title.trim())
+    note.title = req.body.title.trim();
+
+  if (req.body.content && typeof req.body.content === 'string' && req.body.content.trim())
+    note.content = req.body.content.trim();
+
+  note.updatedAt = new Date().toISOString();
+
+  await service.save(notes);
+  res.json(note);
+};
+exports.deleteNote = async (req, res) => {
+  const notes = await service.getNotes();
+  const i = notes.findIndex(n => n.id == req.params.id);
+
+  if (i === -1) return res.status(404).json({ message: "Not found" });
+
+  notes.splice(i, 1);
+  await service.save(notes);
+
+  res.json({ message: "Deleted" });
+};

@@ -1,14 +1,25 @@
-const express = require('express');
-const app = express();
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
 
-const notesRoutes = require('./routes/notesRoutes');
+const FILE = "./notes.json";
 
-app.use(express.json());
+router.delete("/notes/:id", (req, res) => {
+  const id = Number(req.params.id);
 
-app.use('/notes', notesRoutes);
+  fs.readFile(FILE, "utf-8", (err, data) => {
+    if (err) return res.status(500).send("Error reading file");
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+    let notes = JSON.parse(data);
+
+    const updatedNotes = notes.filter((note) => note.id !== id);
+
+    fs.writeFile(FILE, JSON.stringify(updatedNotes, null, 2), (err) => {
+      if (err) return res.status(500).send("Error writing file");
+
+      res.json({ message: "Note deleted successfully" });
+    });
+  });
 });
 
-module.exports = app;
+module.exports = router;

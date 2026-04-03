@@ -1,7 +1,0 @@
-Hello JAVA file IODjango
-1698
-3958
-The distance from office to my home is 26kms
-stop
-Django
-framework

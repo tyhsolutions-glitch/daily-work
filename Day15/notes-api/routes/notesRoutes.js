@@ -1,9 +1,32 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const fs = require("fs").promises;
 
-const controller = require('../controllers/notesController');
- router.get('/', controller.getAllNotes)
- router.get('/:id', controller.getNoteById)
- router.post('/', controller.createNote)
+const FILE = "./data/notes.json";
 
- module.exports = router;
+// 🔹 Get all notes
+router.get("/notes", async (req, res) => {
+  const data = await fs.readFile(FILE, "utf-8");
+  res.json(JSON.parse(data));
+});
+
+router.post("/notes", async (req, res) => {
+  const { text, status } = req.body;
+
+  const newNote = {
+    id: Date.now(),
+    text,
+    status,
+  };
+
+  const data = await fs.readFile(FILE, "utf-8");
+  const notes = JSON.parse(data);
+
+  notes.push(newNote);
+
+  await fs.writeFile(FILE, JSON.stringify(notes, null, 2));
+
+  res.json(newNote);
+});
+
+module.exports = router;
