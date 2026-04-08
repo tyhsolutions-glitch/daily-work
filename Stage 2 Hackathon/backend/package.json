@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for your application",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "mocha tests/**/*.test.js --timeout 5000"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "fs-extra": "^10.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0"
+  }
+}
