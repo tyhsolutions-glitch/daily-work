@@ -45,18 +45,21 @@ app.get('/responses', (req, res) => {
 app.post('/responses', (req, res) => {
   try {
     const { qid, answer } = req.body;
+    const val = answer?.trim();
 
-    if (!qid || !answer) {
-      return res.status(400).json({ error: 'Missing data' });
-    }
+    if (!qid || val)
+      return res.status(400).json({error:'Answer cannot be empty'});
+    
+    if (val.length < 5 || val.length > 25)
+      return res.status(400).json({error:'Answer must be 5-25 characters'})
 
     const data = readJSON(responsePath);
-
-    const newEntry = {
-      id: Date.now(),
+    
+    data.push({
+      id:Date.now(),
       qid,
-      answer,
-    };
+      answer:val
+    });
 
     data.push(newEntry);
     writeJSON(responsePath, data);

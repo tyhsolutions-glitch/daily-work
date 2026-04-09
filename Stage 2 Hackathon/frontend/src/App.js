@@ -1,96 +1,104 @@
-import React from "react";
-import { useState, useEffect } from "react";  
-import axios from "axios"
-import ComboBox from "./components/ComboBox";  
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import ComboBox from "./components/ComboBox";
 
 export default function App() {
-  const [questions, setQuestions] = useState(["", "", ""]);  
-  const [answers, setAnswers] = useState([["", ""], ["", ""], ["", ""]]); 
-  const [hide, setHide] = useState(false); 
+  const [questions, setQuestions] = useState(["", "", ""]);
+  const [answers, setAnswers] = useState([["", ""], ["", ""], ["", ""]]);
+  const [errors, setErrors] = useState([["", ""], ["", ""], ["", ""]]);
+  const [hide, setHide] = useState(false);
 
   useEffect(() => { fetchResponses(); }, []);
 
-  const fetchResponses = () => {
-    axios.get("http://localhost:3000/responses")  
-      .then(res => console.log(res.data)) 
-      .catch(console.log); 
-  };
-  const handleSubmit = async () => {
-    if (questions.includes("")) return alert("Select all questions");
+  const fetchResponses = () =>
+    axios.get("http://localhost:3000/responses")
+      .then(r => console.log(r.data))
+      .catch(console.log);
 
-    if (new Set(questions).size !== 3) return alert("No duplicates allowed");
+  const validate = v =>
+    !v.trim() ? "Answer cannot be empty"
+    : v.trim().length < 5 ? "Min 5 characters"
+    : v.trim().length > 25 ? "Max 25 characters" : "";
 
-    for (let i = 0; i < 3; i++) {
-      if (answers[i][0] !== answers[i][1]) {
-        return alert(`Answers for Question ${i + 1} do not match!`);
-      }
-    }
-    const payload = questions.map((q, i) => ({
-      qid: q,  
-      answer: answers[i][0]  
-    }));
-
-    await Promise.all(
-      payload.map(p =>
-        axios.post("http://localhost:3000/responses", p)  
-      )
+  const isValid = () =>
+    !questions.includes("") &&
+    new Set(questions).size === 3 &&
+    answers.every((x, i) =>
+      x[0].trim() && x[1].trim() &&
+      !errors[i][0] && !errors[i][1] &&
+      x[0] === x[1]
     );
 
-    fetchResponses(); 
-    alert("Saved "); 
+  const handleSubmit = async () => {
+    if (!isValid()) return;
+    await Promise.all(
+      questions.map((q, i) =>
+        axios.post("http://localhost:3000/responses", {
+          qid: q, answer: answers[i][0].trim()
+        })
+      )
+    );
+    fetchResponses();
+    alert("Saved");
   };
 
   return (
     <div style={{ padding: 20 }}>
       <h2>Security Questions</h2>
 
-      {[0, 1, 2].map(i => (  
-        <div key={i}>
-          <label>Question {i + 1}: </label>
+      {[0,1,2].map(i => (
+        <div key={i} style={{ marginBottom: 15 }}>
+          <label>Question {i + 1}:</label>
 
           <ComboBox
-            value={questions[i]}  
-            setValue={(val) => {
-              const q = [...questions]; 
-              q[i] = val;
-              setQuestions(q);
+            value={questions[i]}
+            setValue={val => {
+              const q = [...questions]; q[i] = val; setQuestions(q);
             }}
-            selectedValues={questions.filter((_, idx) => idx !== i)}  
+            selectedValues={questions.filter((_, idx) => idx !== i)}
           />
-          <input
-            type={hide ? "password" : "text"} 
-            placeholder="Enter answer"
-            onChange={(e) => {
-              const a = [...answers]; 
-              a[i][0] = e.target.value;  
-              setAnswers(a);  
-            }}
-          />
-          <input
-            type={hide ? "password" : "text"}  
-            placeholder="Confirm answer"
-            onChange={(e) => {
-              const a = [...answers];  
-              a[i][1] = e.target.value;  
-              setAnswers(a);  
-            }}
-          />
+
+          <div style={{ display: "flex", gap: 10, marginTop: 5 }}>
+            <div>
+              <input
+                type={hide ? "password" : "text"}
+                placeholder="Enter answer"
+                onChange={e => {
+                  const v = e.target.value, a = [...answers], er = [...errors];
+                  a[i][0] = v; er[i][0] = validate(v);
+                  setAnswers(a); setErrors(er);
+                }}s
+              />
+              <div style={{ color: "red", fontSize: 12}}>{errors[i][0]}</div>
+            </div>
+
+            <div>
+              <input
+                type={hide ? "password" : "text"}
+                placeholder="Confirm answer"
+                onChange={e => {
+                  const v = e.target.value, a = [...answers], er = [...errors];
+                  a[i][1] = v;
+                  er[i][1] = validate(v) ||
+                    (a[i][0] && v && a[i][0] !== v ? "Answers do not match" : "");
+                  setAnswers(a); setErrors(er);
+                }}
+              />
+              <div style={{ color: "red", fontSize: 12 }}>{errors[i][1]}</div>
+            </div>
+          </div>
         </div>
       ))}
 
-      <br />
-      <button onClick={handleSubmit}>Submit</button>
+      <button onClick={handleSubmit} disabled={!isValid()}>Submit</button>
 
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={hide} 
-            onChange={(e) => setHide(e.target.checked)} 
-          />
-          Hide Answers
-        </label>
-      </div>
+      <label>
+        <input
+          type="checkbox"
+          checked={hide}
+          onChange={e => setHide(e.target.checked)}
+        /> Hide Answers
+      </label>
     </div>
   );
 }
