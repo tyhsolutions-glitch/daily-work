@@ -2,3 +2,6 @@
 2) Done with basic POST
 3) Adding validation to the note content and title
 4) Added exception handlers
+5) Adding DB implementation
+  i) Configured DB in MySql Workbench
+  ii) Converting pojo to entities

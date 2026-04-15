@@ -1,25 +1,72 @@
 const express = require("express");
-const router = express.Router();
+const cors = require("cors");
 const fs = require("fs");
+const path = require("path");
 
-const FILE = "./notes.json";
+const app = express();
+const FILE = path.join(__dirname, "notes.json");
 
-router.delete("/notes/:id", (req, res) => {
-  const id = Number(req.params.id);
+app.use(cors());
+app.use(express.json());
 
+const readNotes = (callback) => {
   fs.readFile(FILE, "utf-8", (err, data) => {
-    if (err) return res.status(500).send("Error reading file");
+    if (err) {
+      console.error(err);
+      return callback([]);
+    }
 
-    let notes = JSON.parse(data);
+    try {
+      const notes = data ? JSON.parse(data) : [];
+      callback(notes);
+    } catch (e) {
+      console.error("JSON error:", e);
+      callback([]);
+    }
+  });
+};
 
-    const updatedNotes = notes.filter((note) => note.id !== id);
+app.get("/notes", (req, res) => {
+  readNotes((notes) => res.json(notes));
+});
 
-    fs.writeFile(FILE, JSON.stringify(updatedNotes, null, 2), (err) => {
-      if (err) return res.status(500).send("Error writing file");
+app.post("/notes", (req, res) => {
+  console.log("BODY:", req.body);
 
-      res.json({ message: "Note deleted successfully" });
+  const newNote = {
+    id: Date.now().toString(),
+    title: req.body.title,
+    description: req.body.description,
+    createdAt: req.body.createdAt || new Date()
+  };
+
+  readNotes((notes) => {
+    notes.push(newNote);
+    fs.writeFile(FILE, JSON.stringify(notes, null, 2), (err) => {
+      if (err) {
+        console.error("WRITE ERROR:", err);
+        return res.status(500).send("Error writing file");
+      }
+
+      console.log("File updated");
+      res.status(201).json(newNote);
     });
   });
 });
 
-module.exports = router;
+app.delete("/notes/:id", (req, res) => {
+  const id = req.params.id;
+  readNotes((notes) => {
+    const updatedNotes = notes.filter(n => n.id !== id);
+    fs.writeFile(FILE, JSON.stringify(updatedNotes, null, 2), (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Error writing file");
+      }
+      res.json({ message: "Deleted successfully" });
+    });
+  });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));

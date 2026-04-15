@@ -4,7 +4,6 @@ const fs = require("fs").promises;
 
 const FILE = "./data/notes.json";
 
-// 🔹 Get all notes
 router.get("/notes", async (req, res) => {
   const data = await fs.readFile(FILE, "utf-8");
   res.json(JSON.parse(data));

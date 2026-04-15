@@ -43,10 +43,12 @@ public class NoteController {// dependent
 		noteService.deleteOrderbyId(id);
 	}
 	@GetMapping
+	public
 	Iterable<Order1> getOrder(){
 		return noteService.getOrder();
 	}
 	@PostMapping
+	public
 	Integer createOrder(@RequestBody @Valid Order1 order1) 
 	throws IOException{
 		System.out.println(order1.getPrice());

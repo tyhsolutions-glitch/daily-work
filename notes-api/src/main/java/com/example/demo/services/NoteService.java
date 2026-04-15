@@ -1,27 +1,33 @@
 package com.example.demo.services;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.demo.NotesApiApplication;
+
 import com.example.demo.entities.Note;
+import com.example.demo.repositories.NotesRepository;
 
 @Service
 public class NoteService {
 
-    private final NotesApiApplication notesApiApplication;
+    @Autowired
+    NotesRepository notesRepository;
 
-    NoteService(NotesApiApplication notesApiApplication) {
-        this.notesApiApplication = notesApiApplication;
+    public Iterable<Note> getNotes() {
+        return notesRepository.findAll();
     }
 
-    public Note getNotes() {
-        Note note = new Note();
-        note.setId(1234);
-        note.setTitle("Test Note Title");
-        note.setContent("Test Note Content");
-        return note;
+    public Integer addNote(Note note) {
+        notesRepository.save(note);
+        return (int) note.getId();
     }
-    
-    public Note createNote(Note note) {
-    	return note;
+
+    public Optional<Note> getNoteById(Integer id) {
+        return notesRepository.findById(id);
+    }
+
+    public void deleteNote(Integer id) {
+        notesRepository.deleteById(id);
     }
 }
