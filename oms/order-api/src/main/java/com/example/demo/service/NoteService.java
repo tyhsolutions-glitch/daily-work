@@ -32,23 +32,30 @@ public class NoteService {
     public Integer addOrder(Order1 order1) throws IOException {
 
         try {
-
             order1.setStatus(Status.CREATED);
 
             if (order1.getOrderLines() != null) {
                 for (OrderLine line : order1.getOrderLines()) {
+                    if (line.getItem() == null || line.getQuantity() <= 0) {
+                        throw new RuntimeException("Item name and quantity are required");
+                    }
                     line.setOrder(order1);
                 }
             }
+
+            if (order1.getAddress() == null) {
+                throw new RuntimeException("Shipping address is required");
+            }
+
+            order1.getAddress().setOrder(order1);  // Link address to order
 
             Order1 savedOrder = orderRepository.save(order1);
 
             return savedOrder.getId();
 
         } catch (Exception e) {
-            e.printStackTrace();   // keep trainer-style debugging
+            e.printStackTrace();
             throw new IOException("Error while saving order");
         }
-
     }
 }

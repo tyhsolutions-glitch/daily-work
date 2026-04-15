@@ -46,7 +46,6 @@ public class NoteController {
         return noteService.addOrder(order1);
     }
 
-    
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(
@@ -62,6 +61,7 @@ public class NoteController {
 
         return errors;
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleHttpMessageNotReadableException(
@@ -69,20 +69,23 @@ public class NoteController {
 
         return "Invalid JSON input";
     }
+
     class OrderResponse {
 
         private String message;
         private int orderId;
+
         public OrderResponse(String message, int orderId) {
             this.message = message;
             this.orderId = orderId;
         }
+
         public String getMessage() {
             return message;
         }
+
         public int getOrderId() {
             return orderId;
         }
     }
-
 }
