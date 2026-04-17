@@ -12,7 +12,7 @@ import com.example.demo.entity.Status;
 import com.example.demo.repository.Order1Repository;
 
 @Service
-public class NoteService {
+public class OrderProcessingService {
 
     @Autowired
     Order1Repository orderRepository;
@@ -47,7 +47,7 @@ public class NoteService {
                 throw new RuntimeException("Shipping address is required");
             }
 
-            order1.getAddress().setOrder(order1);  // Link address to order
+            order1.getAddress().setOrder(order1);  
 
             Order1 savedOrder = orderRepository.save(order1);
 

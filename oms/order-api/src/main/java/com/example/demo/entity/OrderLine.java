@@ -67,4 +67,5 @@ public class OrderLine {
     public void setOrder(Order1 order) {
         this.order = order;
     }
+		
 }

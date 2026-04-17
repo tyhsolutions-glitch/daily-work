@@ -62,4 +62,9 @@ public class Address {
     public void setOrder(Order1 order) {
         this.order = order;
     }
+
+	public boolean isInvalid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

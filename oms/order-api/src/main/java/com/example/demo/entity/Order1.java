@@ -20,6 +20,10 @@ public class Order1 {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Address address; 
 
+    private double price; 
+
+    private String itemName;  
+
     public int getId() {
         return id;
     }
@@ -46,5 +50,25 @@ public class Order1 {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
