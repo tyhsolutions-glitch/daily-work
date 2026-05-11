@@ -11,8 +11,11 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "item")
+    @Column(name="item")
     private String item;
+
+    @Column(name="quantity") 
+    private int quantity;
 
     private double price;
 
@@ -21,11 +24,11 @@ public class OrderLine {
     @JsonBackReference
     private Order1 order;
 
-    public OrderLine() {
-    }
+    public OrderLine() {}
 
-    public OrderLine(String item, double price) {
+    public OrderLine(String item, int quantity, double price) {
         this.item = item;
+        this.quantity = quantity;  
         this.price = price;
     }
 
@@ -39,6 +42,14 @@ public class OrderLine {
 
     public void setItem(String item) {
         this.item = item;
+    }
+
+    public int getQuantity() {  
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {  
+        this.quantity = quantity;
     }
 
     public double getPrice() {
@@ -56,4 +67,5 @@ public class OrderLine {
     public void setOrder(Order1 order) {
         this.order = order;
     }
+		
 }
